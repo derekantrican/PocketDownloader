@@ -188,6 +188,12 @@ namespace PocketDownloader
             var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(youTubeVideoId);
             List<VideoStreamInfo> qualities = streamInfoSet.Video.OrderByDescending(s => s.VideoQuality).ToList();
 
+            if (qualities.Count == 0)
+            {
+                ThrowDownloadError(itemToDownload);
+                return;
+            }
+
             string fileExtension = qualities[0].Container.GetFileExtension();
             string fileName = "[" + videoInfo.Author + "] " + videoInfo.Title + "." + fileExtension;
 
@@ -212,8 +218,10 @@ namespace PocketDownloader
 
                     return;
                 }
-                catch (Exception ex)  //Catch errors caused by https://github.com/Tyrrrz/YoutubeExplode/issues/219
+                catch (Exception)  //Catch errors caused by https://github.com/Tyrrrz/YoutubeExplode/issues/219
                 {
+                    ThrowDownloadError(itemToDownload);
+
                     if (File.Exists(fullTargetPath))
                         File.Delete(fullTargetPath);
                 }
@@ -227,6 +235,17 @@ namespace PocketDownloader
             {
                 Console.SetCursorPosition(item.ConsoleLocLeft, item.ConsoleLocTop);
                 Console.Write($"({string.Format("{0:F1}", percentage)}%)");
+            }
+        }
+
+        private static void ThrowDownloadError(ConsoleItem item, string message = "")
+        {
+            lock (_sync)
+            {
+                Console.SetCursorPosition(item.ConsoleLocLeft, item.ConsoleLocTop);
+                Console.Write($"ERROR");
+                if (!string.IsNullOrEmpty(message))
+                    Console.Write(": " + message);
             }
         }
     }
