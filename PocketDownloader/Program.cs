@@ -234,7 +234,7 @@ namespace PocketDownloader
             lock (_sync)
             {
                 Console.SetCursorPosition(item.ConsoleLocLeft, item.ConsoleLocTop);
-                Console.Write($"({string.Format("{0:F1}", percentage)}%)");
+                Console.Write($"({string.Format("{0,5:0.0}", percentage)}%)");
             }
         }
 
@@ -242,6 +242,8 @@ namespace PocketDownloader
         {
             lock (_sync)
             {
+                Console.SetCursorPosition(item.ConsoleLocLeft, item.ConsoleLocTop);
+                Console.Write("          "); //Clear out any percentage characters
                 Console.SetCursorPosition(item.ConsoleLocLeft, item.ConsoleLocTop);
                 Console.Write($"ERROR");
                 if (!string.IsNullOrEmpty(message))
