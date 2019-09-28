@@ -186,7 +186,7 @@ namespace PocketDownloader
             YoutubeClient client = new YoutubeClient();
             var videoInfo = await client.GetVideoAsync(youTubeVideoId);
             var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(youTubeVideoId);
-            List<VideoStreamInfo> qualities = streamInfoSet.Video.OrderByDescending(s => s.VideoQuality).ToList();
+            List<MuxedStreamInfo> qualities = streamInfoSet.Muxed.OrderByDescending(s => s.VideoQuality).ToList();
 
             if (qualities.Count == 0)
             {
@@ -207,14 +207,14 @@ namespace PocketDownloader
                 File.Delete(fullTargetPath);
 
             //Loop through qualities highest to lowest (in case high qualities fail) as suggested in https://github.com/Tyrrrz/YoutubeExplode/issues/219
-            foreach (VideoStreamInfo videoQuality in qualities)
+            foreach (MuxedStreamInfo videoQuality in qualities)
             {
                 Progress<double> progress = new Progress<double>();
                 progress.ProgressChanged += (s, e) => { UpdatePercentange(itemToDownload, Math.Round(e * 100, 1)); };
 
                 try
                 {
-                    await client.DownloadMediaStreamAsync(qualities[0], fullTargetPath, progress);
+                    await client.DownloadMediaStreamAsync(videoQuality, fullTargetPath, progress);
 
                     return;
                 }
