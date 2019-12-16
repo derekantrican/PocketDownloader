@@ -204,11 +204,11 @@ namespace PocketDownloaderBase
             }
 
             //Download video
-            bool success = await DownloadWithYouTubeExplode(itemToDownload, fullTargetPath, client);
+            bool success = await DownloadWithYouTubeExplode(itemToDownload, fullTargetPath, client, progress);
             if (!success)
             {
                 itemToDownload.Progress = -1;
-                success = await DownloadAlternate(itemToDownload, fullTargetPath);
+                success = await DownloadAlternate(itemToDownload, fullTargetPath, progress);
             }
 
             if (!success)
