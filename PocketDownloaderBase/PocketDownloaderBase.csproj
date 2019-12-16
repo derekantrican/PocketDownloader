@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PocketSharp" Version="5.0.0" />
+    <PackageReference Include="YoutubeExplode" Version="4.7.11" />
+  </ItemGroup>
+
+</Project>
