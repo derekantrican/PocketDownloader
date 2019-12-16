@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -14,20 +13,14 @@ using YoutubeExplode.Models;
 
 namespace AndroidClient
 {
-    // Learn more about making custom code visible in the Xamarin.Forms previewer
-    // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
         /*=====================================================
         * TODO:
-        * (Before cruise)
+        * - Issue with thumbnails not showing
         * - Setting: download shortest videos first or longest videos first
         * - Setting: download newest videos first or oldest videos first
-        * 
-        * 
-        * (Later)
-        * - Ability to Auth Pocket
         * - Proper way to select a download directory (have the user select it?)
         * - "Only download over wifi" (controlled via a setting & switch)
         * 
