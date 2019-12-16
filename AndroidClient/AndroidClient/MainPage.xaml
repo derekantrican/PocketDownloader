@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="AndroidClient.MainPage" Title="Pocket Downloader">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Settings" Order="Secondary" Priority="0" Clicked="OpenSettings"/>
+    </ContentPage.ToolbarItems>
+    <StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+            <DatePicker x:Name="DatePicker" FontSize="Large" Format="M/d/yyyy"/>
+            <TimePicker x:Name="TimePicker" FontSize="Large"/>
+            <Button x:Name="GetButton" Text="Get" WidthRequest="52" Clicked="GetNewItems"/>
+        </StackLayout>
+        <StackLayout x:Name="GetShortcuts" Orientation="Horizontal" HorizontalOptions="Center">
+            <Button x:Name="Button1D" Text="1D" WidthRequest="45" Clicked="GetWithRange"/>
+            <Button x:Name="Button2D" Text="2D" WidthRequest="45" Clicked="GetWithRange"/>
+            <Button x:Name="Button3D" Text="3D" WidthRequest="45" Clicked="GetWithRange"/>
+            <Button x:Name="Button5D" Text="5D" WidthRequest="45" Clicked="GetWithRange"/>
+            <Button x:Name="Button1W" Text="1W" WidthRequest="45" Clicked="GetWithRange"/>
+            <Button x:Name="Button2W" Text="2W" WidthRequest="45" Clicked="GetWithRange"/>
+            <Button x:Name="Button1M" Text="1M" WidthRequest="45" Clicked="GetWithRange"/>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <ImageButton WidthRequest="35" HeightRequest="35" Source="select_all.png" Margin="5" Clicked="SelectAll" BackgroundColor="Transparent" BorderColor="Transparent"/>
+            <ImageButton WidthRequest="35" HeightRequest="35" Source="select_missing.png" Margin="5" Clicked="SelectMissing" BackgroundColor="Transparent" BorderColor="Transparent"/>
+            <Button x:Name="DownloadButton" Text="Download Selected" HorizontalOptions="FillAndExpand" Clicked="DownloadItems"/>
+        </StackLayout>
+        <ListView x:Name="ListView" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" HasUnevenRows="true"
+                  SelectionMode="None" ItemTapped="ListView_ItemTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <StackLayout Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsChecked}" />
+                                <StackLayout VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" FontAttributes="Bold" VerticalOptions="Center" />
+                                    <Image Source="{Binding Thumbnail}" HeightRequest="72" WidthRequest="128" HorizontalOptions="Start" IsVisible="{Binding UseThumbnails}" Margin="5"/>
+                                </StackLayout>
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal">
+                                <ProgressBar HorizontalOptions="FillAndExpand" VerticalOptions="End" Progress="{Binding Progress}" ProgressColor="Green"/>
+                                <Label Text="{Binding DisplayedProgress}" Margin="5,0"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <StackLayout x:Name="BottomBar" Orientation="Horizontal">
+            <ProgressBar x:Name="TotalProgressBar" HorizontalOptions="FillAndExpand" VerticalOptions="Center" ProgressColor="Green"/>
+            <Label x:Name="TotalProgressLabel" Text="  0.0%" VerticalOptions="Center"/>
+            <Button x:Name="PauseResumeButton" Text="Pause" Clicked="PauseDownloads"/>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

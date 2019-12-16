@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="AndroidClient.SettingsPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout Orientation="Horizontal" Margin="5">
+                <Switch IsToggled="{Binding ShowThumbnails}"/>
+                <Label Text="Show Thumbnails"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" Margin="5">
+                <Switch IsToggled="{Binding DownloadAllOnGet}"/>
+                <Label Text="Download all videos once retrieved"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" Margin="5">
+                <Label Text="Num simultaneous downloads (0=all)" VerticalOptions="Center"/>
+                <Picker VerticalOptions="Center" WidthRequest="30" SelectedIndex="{Binding ChunkSize}">
+                    <Picker.Items>
+                        <x:String>0</x:String>
+                        <x:String>1</x:String>
+                        <x:String>2</x:String>
+                        <x:String>3</x:String>
+                        <x:String>4</x:String>
+                        <x:String>5</x:String>
+                    </Picker.Items>
+                </Picker>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

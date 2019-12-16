@@ -139,20 +139,20 @@ namespace PocketDownloaderBase
 
 
         #region Public Methods
-        public static string AuthPocket(string accessCode = null)
+        public static async Task<string> AuthPocket(string accessCode = null, Action<string> openInBrowserAction = null)
         {
-            if (string.IsNullOrEmpty(accessCode))
+            if (string.IsNullOrEmpty(accessCode) && openInBrowserAction != null)
             {
-                pocketClient = new PocketClient(POCKETCONSUMERKEY) { CallbackUri = "https://getpocket.com/a/queue/" };
-                string requestCode = pocketClient.GetRequestCode().Result;
-                Process.Start(pocketClient.GenerateAuthenticationUri().ToString()); //Todo: this doesn't work on all platforms
+                pocketClient = new PocketClient(POCKETCONSUMERKEY) { CallbackUri = "https://derekantrican.github.io/authsuccess" };
+                string requestCode = await pocketClient.GetRequestCode();
+                openInBrowserAction.Invoke(pocketClient.GenerateAuthenticationUri().ToString());
 
                 PocketUser user;
                 while (true)
                 {
                     try
                     {
-                        user = pocketClient.GetUser(requestCode).Result;
+                        user = await pocketClient.GetUser(requestCode);
                         break;
                     }
                     catch { }

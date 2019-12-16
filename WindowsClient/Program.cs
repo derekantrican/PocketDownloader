@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace WindowsClient
 
         static void Main(string[] args)
         {
-            Downloader.AuthPocket();
+            Downloader.AuthPocket(openInBrowserAction: s => Process.Start(s)).Wait();
 
             List<Item> allArticles = Downloader.GetPocketItems().Result;
             List<Item> selectedArticles = GetSelectionFromList(allArticles);
