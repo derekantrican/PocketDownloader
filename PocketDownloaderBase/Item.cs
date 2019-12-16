@@ -2,6 +2,8 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using YoutubeExplode;
 using YoutubeExplode.Models;
 
 namespace PocketDownloaderBase
@@ -12,6 +14,7 @@ namespace PocketDownloaderBase
         private string title = "";
         private bool isChecked;
         private double progress = 0;
+        private Video videoInfo;
         #endregion Private Properties
 
 
@@ -26,7 +29,6 @@ namespace PocketDownloaderBase
 
         #region Public Properties
         public PocketItem PocketItem { get; set; }
-        public Video VideoInfo { get; set; }
 
         public string Title
         {
@@ -79,8 +81,18 @@ namespace PocketDownloaderBase
 
 
         #region Public Methods
+        public async Task<Video> GetOrGenerateVideoInfo()
+        {
+            if (videoInfo == null)
+            {
+                YoutubeClient client = new YoutubeClient();
+                videoInfo = await client.GetVideoAsync(YoutubeClient.ParseVideoId(PocketItem.Uri.ToString()));
+            }
 
+            return videoInfo;
+        }
         #endregion Public Methods
+
 
         #region Property Changed
         public event PropertyChangedEventHandler PropertyChanged;

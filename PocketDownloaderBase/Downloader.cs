@@ -35,8 +35,8 @@ namespace PocketDownloaderBase
         #region Private Methods
         private static void UpdateTotalProgress()
         {
-            double totalDownloadSeconds = ItemsScheduledForDownload.Sum(p => p.Progress >= 0 ? p.VideoInfo.Duration.TotalSeconds : 0);
-            double totalProgress = ItemsScheduledForDownload.Sum(p => p.Progress >= 0 ? p.Progress * (p.VideoInfo.Duration.TotalSeconds / totalDownloadSeconds) : 0);
+            double totalDownloadSeconds = ItemsScheduledForDownload.Sum(p => p.Progress >= 0 ? p.GetOrGenerateVideoInfo().Result.Duration.TotalSeconds : 0);
+            double totalProgress = ItemsScheduledForDownload.Sum(p => p.Progress >= 0 ? p.Progress * (p.GetOrGenerateVideoInfo().Result.Duration.TotalSeconds / totalDownloadSeconds) : 0);
 
             TotalProgress?.Report(totalProgress);
         }
@@ -51,7 +51,7 @@ namespace PocketDownloaderBase
                     File.Delete(targetPath);
 
                 string youTubeVideoId = YoutubeClient.ParseVideoId(itemToDownload.PocketItem.Uri.ToString());
-                Video videoInfo = await client.GetVideoAsync(youTubeVideoId);
+                Video videoInfo = await itemToDownload.GetOrGenerateVideoInfo();
                 MediaStreamInfoSet streamInfoSet = await client.GetVideoMediaStreamInfosAsync(youTubeVideoId);
                 List<MuxedStreamInfo> qualities = streamInfoSet.Muxed.OrderByDescending(s => s.VideoQuality).ToList();
 
@@ -108,8 +108,7 @@ namespace PocketDownloaderBase
                 string saveMediaURL = $"https://dev.invidio.us/watch?v={youTubeVideoId}"; //"https://odownloader.com/download?q=" + HttpUtility.UrlEncode(itemToDownload.PocketItem.Uri.ToString());
                 using (WebClient client = new WebClient())
                 {
-                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; " +
-                                          "Windows NT 5.2; .NET CLR 1.0.3705;)");
+                    client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
                     string html = client.DownloadString(saveMediaURL);
                     string videoSources = Regex.Match(html, @"<source.*>").Value;
                     string downloadURLWithHighestQuality = "https://www.invidio.us" + Regex.Match(videoSources, @"src=""([^""]*)""").Groups[1].Value;
@@ -186,7 +185,7 @@ namespace PocketDownloaderBase
 
             try
             {
-                Video videoInfo = await client.GetVideoAsync(YoutubeClient.ParseVideoId(itemToDownload.PocketItem.Uri.ToString()));
+                Video videoInfo = await itemToDownload.GetOrGenerateVideoInfo();
                 fileName = $"[{videoInfo.Author}] {videoInfo.Title}.mp4";
                 fileName = Utilities.RemoveInvalidPathCharacters(fileName);
             }
