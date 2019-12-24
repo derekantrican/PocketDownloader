@@ -43,6 +43,8 @@ namespace AndroidClient
             DatePicker.Date = DateTime.Now;
             TimePicker.Time = DateTime.Now.TimeOfDay;
 
+            Downloader.AuthBrowserAction = s => Launcher.OpenAsync(new Uri(s));
+            Downloader.SaveAccessCodeAction = s => Settings.Instance.PocketAuthCode = s;
             Downloader.DownloadDirectory = "/storage/emulated/0/Download";
             Progress<double> totalProgress = new Progress<double>();
             totalProgress.ProgressChanged += (sender, args) => SetTotalProgress(args);
@@ -55,8 +57,7 @@ namespace AndroidClient
 
         private async void AuthPocket()
         {
-            string authCode = await Downloader.AuthPocket(Settings.Instance.PocketAuthCode, s => Launcher.OpenAsync(new Uri(s)));
-            Settings.Instance.PocketAuthCode = authCode;
+            await Downloader.AuthPocket(Settings.Instance.PocketAuthCode);
         }
 
         private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)

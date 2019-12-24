@@ -24,6 +24,8 @@ namespace PocketDownloaderBase
 
 
         #region Public Properties
+        public static Action<string> AuthBrowserAction { get; set; }
+        public static Action<string> SaveAccessCodeAction { get; set; }
         public static string DownloadDirectory { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
         public static IProgress<double> TotalProgress { get; set; }
         public static int FailedDownloads { get; set; } = 0;
@@ -139,13 +141,13 @@ namespace PocketDownloaderBase
 
 
         #region Public Methods
-        public static async Task<string> AuthPocket(string accessCode = null, Action<string> openInBrowserAction = null)
+        public static async Task AuthPocket(string accessCode = null)
         {
-            if (string.IsNullOrEmpty(accessCode) && openInBrowserAction != null)
+            if (string.IsNullOrEmpty(accessCode) && AuthBrowserAction != null)
             {
                 pocketClient = new PocketClient(POCKETCONSUMERKEY) { CallbackUri = "https://derekantrican.github.io/authsuccess" };
                 string requestCode = await pocketClient.GetRequestCode();
-                openInBrowserAction.Invoke(pocketClient.GenerateAuthenticationUri().ToString());
+                AuthBrowserAction.Invoke(pocketClient.GenerateAuthenticationUri().ToString());
 
                 PocketUser user;
                 while (true)
@@ -160,15 +162,29 @@ namespace PocketDownloaderBase
                 }
 
                 accessCode = user.Code;
+                SaveAccessCodeAction?.Invoke(accessCode);
             }
 
             pocketClient = new PocketClient(POCKETCONSUMERKEY, accessCode);
-            return accessCode;
         }
 
         public static async Task<List<Item>> GetPocketItems(DateTime? sinceDate = null)
         {
-            IEnumerable<PocketItem> items = await pocketClient.Get();
+            IEnumerable<PocketItem> items = null;
+            try
+            {
+                items = await pocketClient.Get();
+            }
+            catch (PocketException ex)
+            {
+                if (ex.PocketErrorCode == 107) //Need to reauth
+                {
+                    //Todo: need to alert user that we need to reauth
+                    await AuthPocket(null);
+                    items = await pocketClient.Get();
+                }
+            }
+
             List<PocketItem> pocketItemsList = items.Where(p => p.Uri.ToString().Contains("youtu")).ToList();
 
             if (sinceDate != null)

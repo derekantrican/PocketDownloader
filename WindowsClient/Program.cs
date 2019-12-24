@@ -19,7 +19,8 @@ namespace WindowsClient
 
         static void Main(string[] args)
         {
-            Downloader.AuthPocket(openInBrowserAction: s => Process.Start(s)).Wait();
+            Downloader.AuthBrowserAction = s => Process.Start(s);
+            Downloader.AuthPocket().Wait();
 
             List<Item> allArticles = Downloader.GetPocketItems().Result;
             List<Item> selectedArticles = GetSelectionFromList(allArticles);
