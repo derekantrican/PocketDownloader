@@ -8,4 +8,4 @@ A simple application that allows a user to download YouTube videos saved to [Poc
 
 ### Android Client:
 
-![android](https://i.imgur.com/xlaRbjo.gif)
+<img src="https://i.imgur.com/xlaRbjo.gif" width="400">
