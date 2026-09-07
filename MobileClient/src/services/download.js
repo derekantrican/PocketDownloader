@@ -28,6 +28,7 @@ class DownloadService {
           outputDir: settings.downloadLocation || null,
           format: QUALITY_FORMATS[settings.videoQuality || 'best'] || QUALITY_FORMATS.best,
           sponsorBlock: settings.sponsorBlock ?? false,
+          preciseCuts: settings.preciseSponsorCuts ?? false,
         };
       }
     } catch (e) { /* use defaults */ }
@@ -35,6 +36,7 @@ class DownloadService {
       outputDir: null,
       format: QUALITY_FORMATS.best,
       sponsorBlock: false,
+      preciseCuts: false,
     };
   }
 

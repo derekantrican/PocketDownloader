@@ -162,6 +162,11 @@ export default function HomeScreen({ navigation }) {
     };
     progressFlushTimerRef.current = setInterval(flushProgress, 500);
 
+    const titleById = {};
+    itemsToDownload.forEach((it) => { titleById[it.id] = it.title; });
+    const processingItems = new Set();
+    const dlMax = {};
+
     const progressSub = ApiService.getProgressEmitter().addListener(
       'YtDlpProgress',
       (event) => {
@@ -171,10 +176,19 @@ export default function HomeScreen({ navigation }) {
         const isPostProcessing = line.includes('[Merger]') || line.includes('[SponsorBlock]') ||
           line.includes('[ffmpeg]') || line.includes('[FixupM3u8]') || line.includes('[ModifyChapters]');
         if (isPostProcessing) {
-          // Sentinel: 1.01 = post-processing
+          // Sentinel: 1.01 = post-processing (download finished, still merging / cutting)
           progressBufferRef.current[itemId] = 1.01;
-        } else if (event.progress >= 0) {
-          progressBufferRef.current[itemId] = event.progress;
+          if (!processingItems.has(itemId)) {
+            processingItems.add(itemId);
+            Logger.log(`Processing "${titleById[itemId] || itemId}"… (merging / SponsorBlock — can take several minutes)`);
+          }
+        } else if (event.progress >= 0 && !processingItems.has(itemId)) {
+          // Cap below 1.0 (exactly 1.0 means fully finished) and keep it monotonic so the
+          // bar doesn't jump backwards when a second stream (audio) starts downloading.
+          const capped = Math.min(event.progress, 0.999);
+          const next = Math.max(capped, dlMax[itemId] || 0);
+          dlMax[itemId] = next;
+          progressBufferRef.current[itemId] = next;
         }
       }
     );
@@ -203,7 +217,9 @@ export default function HomeScreen({ navigation }) {
             try {
               const result = await DownloadService.downloadVideo(item);
               if (result.error === 'Cancelled' && pausedRef.current) {
-                // Re-queue cancelled items from pause
+                // Re-queue cancelled items from pause — reset their progress tracking
+                dlMax[item.id] = 0;
+                processingItems.delete(item.id);
                 queueRef.current.unshift(item);
               } else if (!result.success) {
                 setProgress((prev) => ({ ...prev, [item.id]: -1 }));

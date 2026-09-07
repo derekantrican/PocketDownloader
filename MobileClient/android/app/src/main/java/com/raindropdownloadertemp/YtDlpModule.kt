@@ -40,6 +40,7 @@ class YtDlpModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
                 val format = options?.getString("format")
                     ?: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
                 val sponsorBlock = options?.getBoolean("sponsorBlock") ?: false
+                val preciseCuts = options?.getBoolean("preciseCuts") ?: false
 
                 val dir = File(outputDir)
                 if (!dir.exists()) dir.mkdirs()
@@ -54,7 +55,10 @@ class YtDlpModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
 
                 if (sponsorBlock) {
                     request.addOption("--sponsorblock-remove", "all")
-                    request.addOption("--force-keyframes-at-cuts")
+                    if (preciseCuts) {
+                        // Forces a full re-encode so cuts land exactly; very slow on mobile CPUs.
+                        request.addOption("--force-keyframes-at-cuts")
+                    }
                 }
 
                 val response = YoutubeDL.getInstance().execute(

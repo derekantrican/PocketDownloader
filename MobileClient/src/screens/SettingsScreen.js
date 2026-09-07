@@ -37,6 +37,7 @@ export default function SettingsScreen({ navigation }) {
   const [downloadLocation, setDownloadLocation] = useState('');
   const [videoQuality, setVideoQuality] = useState('best');
   const [sponsorBlock, setSponsorBlock] = useState(false);
+  const [preciseSponsorCuts, setPreciseSponsorCuts] = useState(false);
   const [raindropFilter, setRaindropFilter] = useState('video');
   const [logs, setLogs] = useState([]);
 
@@ -56,6 +57,7 @@ export default function SettingsScreen({ navigation }) {
       setDownloadLocation(settings.downloadLocation ?? '');
       setVideoQuality(settings.videoQuality ?? 'best');
       setSponsorBlock(settings.sponsorBlock ?? false);
+      setPreciseSponsorCuts(settings.preciseSponsorCuts ?? false);
       setRaindropFilter(settings.raindropFilter ?? 'video');
     }
 
@@ -208,6 +210,20 @@ export default function SettingsScreen({ navigation }) {
           trackColor={{ true: '#5c6bc0' }}
         />
       </View>
+
+      {sponsorBlock && (
+        <View style={styles.setting}>
+          <Text style={styles.label}>Precise sponsor cuts (slower)</Text>
+          <Switch
+            value={preciseSponsorCuts}
+            onValueChange={(val) => {
+              setPreciseSponsorCuts(val);
+              saveSettings('preciseSponsorCuts', val);
+            }}
+            trackColor={{ true: '#5c6bc0' }}
+          />
+        </View>
+      )}
 
       <View style={styles.setting}>
         <Text style={styles.label}>Download over WiFi only</Text>
