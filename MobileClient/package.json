@@ -29,6 +29,6 @@
     "babel-plugin-module-resolver": "^5.0.0",
     "eslint": "^8.57.0",
     "metro-react-native-babel-preset": "^0.77.0",
-    "sharp": "^0.35.1"
+    "sharp": "^0.35.4"
   }
 }
